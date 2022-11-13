@@ -12,12 +12,14 @@ if __name__ == '__main__':
     # Create graph
     graph = Graph(config.city_numbers)
     graph.compute_distance()
-    vertices = graph.get_vertices()
+    print("Matrice des distances:")
+    # graph.print_distances_by_min_colored()
 
     # --2.1 Algorithme du plus proche voisin--
-
-    L, dist = graph.p_voisin(vertices[0])
-    print("Distance parcourue par l'algorithme du plus proche voisin : ", round(dist, 2))
+    print("Algorithme du plus proche voisin".center(50, "-"))
+    L, dist = graph.p_voisin(0)
+    print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
+    print("Chemin parcouru:\033[92m", [s + 1 for s in L], "\033[0m")
 
     # --2.2 Algorithme du plus proche voisin amélioré--
 
