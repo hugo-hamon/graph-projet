@@ -10,6 +10,7 @@ class Graph:
         self.n = n
         self.vertices = np.random.uniform(0, 1, (n, 2))
         self.distances = np.zeros((n, n))
+        self.__compute_distance()
 
     # REQUESTS
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
@@ -23,7 +24,7 @@ class Graph:
     def get_distances(self) -> np.ndarray:
         """Return a copy of the distances matrix"""
         return self.distances.copy()
-
+    
     def get_nearest_vertex(self, v1: int) -> int:
         """Return the nearest vertex by index. Do not perform a copy of the distances matrix."""
         distances = self.get_distances()
@@ -54,13 +55,9 @@ class Graph:
         self.distances = distances
         return np.array(path)
 
-    def pvc_prim(self, vertex_idx: int) -> np.ndarray:
-        """
-        Prim's algorithm to find the minimum spanning tree.
-        """
-        pass
+    # COMMANDS
 
-    def compute_distance(self) -> None:
+    def __compute_distance(self) -> None:
         """Compute the distance matrix"""
         X = self.vertices[:, 0]
         Y = self.vertices[:, 1]
@@ -69,18 +66,22 @@ class Graph:
     # TOOLS
 
     def plot(self) -> None:
-        """Plot the graph"""
-        for i, j in product(range(self.n), range(self.n)):
+        """Plot the vertices"""
+        """for i, j in product(range(self.n), range(self.n)):
             if self.distances[i, j] != 0:
                 plt.plot(
                     [self.vertices[i][0], self.vertices[j][0]],
                     [self.vertices[i][1], self.vertices[j][1]],
                     '-o', color='black', alpha=0.3, markersize=10, linewidth=1
                 )
+        plt.show()"""
+        plt.scatter(self.vertices[:,0], self.vertices[:,1],
+                    marker='o', color='red', linewidth=5)
         plt.show()
 
     def print_distances_by_min_colored(self) -> None:
         """Print the distances matrix"""
+        """
         for i in range(self.n):
             nearest_vertex = self.get_nearest_vertex(i)
             print("[ ", end="")
@@ -91,4 +92,10 @@ class Graph:
                 else:
                     print(f"{n:.2f}", end=' ')
             print("]")
-        print()
+        print()"""
+        
+        print(np.array2string(self.distances, precision=2, floatmode='fixed'))
+        
+    def draw_path(self, path) -> None:
+        """Plot the path"""
+        pass
