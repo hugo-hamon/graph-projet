@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from itertools import product
-from typing import Tuple, List
+from typing import List
 import numpy as np
 
 
@@ -35,24 +35,30 @@ class Graph:
         self.distances[v1, L] = np.inf
         return int(np.argmin(self.distances[v1]))
 
-    def p_voisin(self, vertex_idx: int) -> Tuple[np.ndarray, float]:
+    def compute_distance_by_path(self, L: np.ndarray) -> float:
+        """Compute the distance by a path"""
+        return sum(self.distances[L[i], L[(i + 1) % self.n]] for i in range(self.n))
+
+    # COMMANDS
+    def p_voisin(self, vertex_idx: int) -> np.ndarray:
         """
         Greedy algorithm by nearest neighbour not already visited return the list of vertices and the distance.
         Vertex is the index of the starting vertex.
         """
         distances = self.get_distances()
         path = [vertex_idx]
-        distance = 0
         for _ in range(self.n - 1):
             nearest_vertex = self.get_nearest_vertex_not_in(vertex_idx, path)
             path.append(nearest_vertex)
-            distance += self.distances[vertex_idx, nearest_vertex]
             vertex_idx = nearest_vertex
-        distance += self.distances[vertex_idx, path[0]]
         self.distances = distances
-        return np.array(path), distance
+        return np.array(path)
 
-    # COMMANDS
+    def pvc_prim(self, vertex_idx: int) -> np.ndarray:
+        """
+        Prim's algorithm to find the minimum spanning tree.
+        """
+        pass
 
     def compute_distance(self) -> None:
         """Compute the distance matrix"""

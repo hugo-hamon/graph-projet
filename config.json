@@ -1,4 +1,6 @@
 {
-    "city_numbers": 1000,
-    "iterations_numbers": 100
+    "city_numbers": 100,
+    "iterations_numbers": 100,
+    "show_graph": false,
+    "show_info": true
 }
