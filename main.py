@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from config import Config
 from graph import Graph
-import time
 
 config_filepath = "config.json"
 
@@ -21,9 +20,7 @@ if __name__ == '__main__':
     if config.brute_force:
         if config.show_info:
             print("Algorithme de brut force")
-        start_time = time.time()
         path = graph.brute_force()
-        print("Temps d'execution: %s secondes" % (time.time() - start_time))
         dist = graph.compute_distance_by_path(path)
         if config.show_info:
             print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
