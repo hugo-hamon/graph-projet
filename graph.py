@@ -59,14 +59,14 @@ class Graph:
         """Brute force algorithm"""
         if self.n > 8:
             raise ValueError("Too much vertices for brute force algorithm")
-        paths = (list(product(range(self.n), repeat=self.n)))
-        paths = np.array([path for path in paths if len(set(path)) == self.n])
-        distances = np.array([self.compute_distance_by_path(path) for path in paths])
+        paths = np.array([path for path in product(range(self.n), repeat=self.n) if len(set(path)) == self.n])
+        distances = np.array(
+            [self.compute_distance_by_path(path) for path in paths])
         return paths[np.argmin(distances)]
-        
 
-
+            
     # COMMANDS
+
     def __compute_distance(self) -> None:
         """Compute the distance matrix"""
         X = self.vertices[:, 0]
