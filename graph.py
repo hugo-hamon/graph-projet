@@ -12,7 +12,7 @@ class Graph:
         self.distances = np.zeros((n, n))
         self.__compute_distance()
 
-    # REQUESTS
+    # REQUESTS   
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
         """Return the euclidean distance between two vertices"""
         return np.sqrt((v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2)
@@ -37,9 +37,13 @@ class Graph:
         return int(np.argmin(self.distances[v1]))
 
     def compute_distance_by_path(self, L: np.ndarray) -> float:
-        """Compute the distance by a path"""
-        return sum(self.distances[L[i], L[(i + 1) % self.n]] for i in range(self.n))
-
+        """Compute the distance of a path"""
+        return sum(self.distances[L[:-1], L[1:]]) + self.distances[L[0], L[-1]]
+    
+    def compute_list_distance_by_path(self, Ll: np.ndarray) -> np.ndarray:
+        """Compute a list of distances from a list of paths"""
+        return np.sum(self.distances[Ll[:,:-1], Ll[:,1:]], axis=1) + self.distances[Ll[:,0], Ll[:,-1]]
+    
     # COMMANDS
     def p_voisin(self, vertex_idx: int) -> np.ndarray:
         """
@@ -57,10 +61,10 @@ class Graph:
 
     def brute_force(self) -> np.ndarray:
         """Brute force algorithm"""
-        if self.n > 10:
+        if self.n > 11:
             raise ValueError("Too much vertices for brute force algorithm")
-        paths = np.array(list(permutations(range(self.n))))
-        distances = np.array([self.compute_distance_by_path(path) for path in paths])
+        paths = np.array(list(permutations(range(self.n))), dtype=np.uint8)
+        distances = self.compute_list_distance_by_path(paths)
         return paths[np.argmin(distances)]
 
             
