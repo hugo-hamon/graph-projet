@@ -12,7 +12,7 @@ class Graph:
         self.distances = np.zeros((n, n))
         self.__compute_distance()
 
-    # REQUESTS
+    # REQUESTS   
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
         """Return the euclidean distance between two vertices"""
         return np.sqrt((v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2)
@@ -41,7 +41,7 @@ class Graph:
         return sum(self.distances[L[:-1], L[1:]]) + self.distances[L[0], L[-1]]
     
     def compute_list_distance_by_path(self, Ll: np.ndarray) -> np.ndarray:
-        """Compute list of distances from a list of paths"""
+        """Compute a list of distances from a list of paths"""
         return np.sum(self.distances[Ll[:,:-1], Ll[:,1:]], axis=1) + self.distances[Ll[:,0], Ll[:,-1]]
     
     # COMMANDS
