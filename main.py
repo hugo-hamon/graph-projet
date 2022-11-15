@@ -12,19 +12,29 @@ if __name__ == '__main__':
 
     # Create graph
     graph = Graph(config.city_numbers)
-    graph.compute_distance()
     if config.show_graph:
         print("Matrice des distances:")
-        graph.print_distances_by_min_colored()
+        graph.print_distances()
+
+    # --2.0 Algorithme de brut froce--
+    if config.brute_force:
+        if config.show_info:
+            print("Algorithme de brut force")
+        graph.brute_force()
+        path = graph.brute_force()
+        dist = graph.compute_distance_by_path(path)
+        if config.show_info:
+            print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
+            print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # --2.1 Algorithme du plus proche voisin--
     if config.show_info:
         print("Algorithme du plus proche voisin".center(50, "-"))
-    L = graph.p_voisin(0)
-    dist = graph.compute_distance_by_path(L)
+    path = graph.p_voisin(0)
+    dist = graph.compute_distance_by_path(path)
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
-        print("Chemin parcouru:\033[92m", [s + 1 for s in L], "\033[0m")
+        print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # --2.2 Algorithme du plus proche voisin amélioré--
 
@@ -41,7 +51,3 @@ if __name__ == '__main__':
         print("Chemin parcouru:\033[92m", [s + 1 for s in L], "\033[0m")
     """
     # --2.5 Algorithme heuristique de la demi-somme--
-
-        
-
-

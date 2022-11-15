@@ -8,6 +8,7 @@ class Config:
     iterations_numbers: int = 100
     show_graph: bool = False
     show_info = True
+    brute_force = False
 
     def load_config(self, filepath: str) -> None:
         with open(filepath) as f:

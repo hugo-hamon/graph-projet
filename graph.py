@@ -24,7 +24,7 @@ class Graph:
     def get_distances(self) -> np.ndarray:
         """Return a copy of the distances matrix"""
         return self.distances.copy()
-    
+
     def get_nearest_vertex(self, v1: int) -> int:
         """Return the nearest vertex by index. Do not perform a copy of the distances matrix."""
         distances = self.get_distances()
@@ -55,8 +55,18 @@ class Graph:
         self.distances = distances
         return np.array(path)
 
-    # COMMANDS
+    def brute_force(self) -> np.ndarray:
+        """Brute force algorithm"""
+        if self.n > 8:
+            raise ValueError("Too much vertices for brute force algorithm")
+        paths = (list(product(range(self.n), repeat=self.n)))
+        paths = np.array([path for path in paths if len(set(path)) == self.n])
+        distances = np.array([self.compute_distance_by_path(path) for path in paths])
+        return paths[np.argmin(distances)]
+        
 
+
+    # COMMANDS
     def __compute_distance(self) -> None:
         """Compute the distance matrix"""
         X = self.vertices[:, 0]
@@ -64,38 +74,21 @@ class Graph:
         self.distances = np.sqrt((X[:, None] - X) ** 2 + (Y[:, None] - Y) ** 2)
 
     # TOOLS
-
     def plot(self) -> None:
         """Plot the vertices"""
-        """for i, j in product(range(self.n), range(self.n)):
+        for i, j in product(range(self.n), range(self.n)):
             if self.distances[i, j] != 0:
                 plt.plot(
                     [self.vertices[i][0], self.vertices[j][0]],
                     [self.vertices[i][1], self.vertices[j][1]],
                     '-o', color='black', alpha=0.3, markersize=10, linewidth=1
                 )
-        plt.show()"""
-        plt.scatter(self.vertices[:,0], self.vertices[:,1],
-                    marker='o', color='red', linewidth=5)
         plt.show()
 
-    def print_distances_by_min_colored(self) -> None:
+    def print_distances(self) -> None:
         """Print the distances matrix"""
-        """
-        for i in range(self.n):
-            nearest_vertex = self.get_nearest_vertex(i)
-            print("[ ", end="")
-            for j in range(self.n):
-                n = round(self.distances[i, j], 2)
-                if j == nearest_vertex:
-                    print(f"\033[92m{n:.2f}\033[0m", end=' ')
-                else:
-                    print(f"{n:.2f}", end=' ')
-            print("]")
-        print()"""
-        
         print(np.array2string(self.distances, precision=2, floatmode='fixed'))
-        
+
     def draw_path(self, path) -> None:
         """Plot the path"""
         pass
