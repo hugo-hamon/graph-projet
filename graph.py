@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from itertools import product
+from itertools import product, permutations
 from typing import List
 import numpy as np
 
@@ -57,11 +57,10 @@ class Graph:
 
     def brute_force(self) -> np.ndarray:
         """Brute force algorithm"""
-        if self.n > 8:
+        if self.n > 10:
             raise ValueError("Too much vertices for brute force algorithm")
-        paths = np.array([path for path in product(range(self.n), repeat=self.n) if len(set(path)) == self.n])
-        distances = np.array(
-            [self.compute_distance_by_path(path) for path in paths])
+        paths = np.array(list(permutations(range(self.n))))
+        distances = np.array([self.compute_distance_by_path(path) for path in paths])
         return paths[np.argmin(distances)]
 
             
