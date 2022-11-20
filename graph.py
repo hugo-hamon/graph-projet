@@ -5,14 +5,20 @@ import numpy as np
 
 
 class Graph:
-
-    def __init__(self, n: int) -> None:
-        self.n = n
-        self.vertices = np.random.uniform(0, 1, (n, 2))
+    """Base class for all algorithm, uses bruteforce"""
+    def __init__(self, n: int, vertices = None) -> None:
+        if (vertices is None):
+            self.n = n
+            self.vertices = np.random.uniform(0, 1, (n, 2))
+        else:
+            self.n = vertices.shape[0]
+            self.vertices = vertices
         self.distances = np.zeros((n, n))
         self.__compute_distance()
+        
+    #Constructeur à partir de valeur?
 
-    # REQUESTS
+    # REQUESTS   
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
         """Return the euclidean distance between two vertices"""
         return np.sqrt((v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2)
@@ -25,46 +31,27 @@ class Graph:
         """Return a copy of the distances matrix"""
         return self.distances.copy()
 
-    def get_nearest_vertex(self, v1: int) -> int:
-        """Return the nearest vertex by index. Do not perform a copy of the distances matrix."""
-        distances = self.get_distances()
-        distances[v1, v1] = np.inf
-        return int(np.argmin(distances[v1]))
-
-    def get_nearest_vertex_not_in(self, v1: int, L: List[int]) -> int:
-        """Return the nearest vertex by index not in L. Do not perform a copy of the distances matrix."""
-        self.distances[v1, L] = np.inf
-        return int(np.argmin(self.distances[v1]))
-
     def compute_distance_by_path(self, L: np.ndarray) -> float:
-        """Compute the distance by a path"""
-        return sum(self.distances[L[i], L[(i + 1) % self.n]] for i in range(self.n))
+        """Compute the distance of a path"""
+        return sum(self.distances[L[:-1], L[1:]]) + self.distances[L[0], L[-1]]
+    
+    def compute_list_distance_by_path(self, Ll: np.ndarray) -> np.ndarray:
+        """Compute a list of distances from a list of paths"""
+        return np.sum(self.distances[Ll[:,:-1], Ll[:,1:]], axis=1) + self.distances[Ll[:,0], Ll[:,-1]]
+    
+    def compute():
+        """return the shortest path found using the class' algorithm"""
+        return self.brute_force()
 
     # COMMANDS
-    def p_voisin(self, vertex_idx: int) -> np.ndarray:
-        """
-        Greedy algorithm by nearest neighbour not already visited return the list of vertices and the distance.
-        Vertex is the index of the starting vertex.
-        """
-        distances = self.get_distances()
-        path = [vertex_idx]
-        for _ in range(self.n - 1):
-            nearest_vertex = self.get_nearest_vertex_not_in(vertex_idx, path)
-            path.append(nearest_vertex)
-            vertex_idx = nearest_vertex
-        self.distances = distances
-        return np.array(path)
 
-    def brute_force(self) -> np.ndarray:
+    def __brute_force(self) -> np.ndarray:
         """Brute force algorithm"""
-        if self.n > 10:
+        if self.n > 11:
             raise ValueError("Too much vertices for brute force algorithm")
-        paths = np.array(list(permutations(range(self.n))))
-        distances = np.array([self.compute_distance_by_path(path) for path in paths])
+        paths = np.array(list(permutations(range(self.n))), dtype=np.uint8)
+        distances = self.compute_list_distance_by_path(paths)
         return paths[np.argmin(distances)]
-
-            
-    # COMMANDS
 
     def __compute_distance(self) -> None:
         """Compute the distance matrix"""
@@ -90,4 +77,46 @@ class Graph:
 
     def draw_path(self, path) -> None:
         """Plot the path"""
+        pass
+
+class Greedy(Graph):
+    """Greedy algorithm"""
+    def compute(self):
+        return self.p_voisin(0)
+
+    def p_voisin(self, vertex_idx: int) -> np.ndarray:
+        """
+        Greedy algorithm by nearest neighbour not already visited return the list of vertices and the distance.
+        Vertex is the index of the starting vertex.
+        """
+        distances = self.get_distances()
+        path = [vertex_idx]
+        for _ in range(self.n - 1):
+            nearest_vertex = self.get_nearest_vertex_not_in(vertex_idx, path)
+            path.append(nearest_vertex)
+            vertex_idx = nearest_vertex
+        self.distances = distances
+        return np.array(path)
+
+    def get_nearest_vertex(self, v1: int) -> int:
+        """Return the nearest vertex by index. Do not perform a copy of the distances matrix."""
+        distances = self.get_distances()
+        distances[v1, v1] = np.inf
+        return int(np.argmin(distances[v1]))
+
+    def get_nearest_vertex_not_in(self, v1: int, L: List[int]) -> int:
+        """Return the nearest vertex by index not in L. Do not perform a copy of the distances matrix."""
+        self.distances[v1, L] = np.inf
+        return int(np.argmin(self.distances[v1]))
+
+class Greedy_opti(Greedy):
+    def compute():
+        base = super().compute()
+        lines = compute_lines(base)
+        res = remove_intersections(base, lines)
+
+    def compute_lines(path: np.ndarray):
+        pass
+
+    def remove_intersections(path: np.ndarray, lines: np.ndarray):
         pass
