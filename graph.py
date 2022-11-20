@@ -15,8 +15,6 @@ class Graph:
             self.vertices = vertices
         self.distances = np.zeros((n, n))
         self.__compute_distance()
-        
-    #Constructeur à partir de valeur?
 
     # REQUESTS   
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
@@ -110,13 +108,26 @@ class Greedy(Graph):
         return int(np.argmin(self.distances[v1]))
 
 class Greedy_opti(Greedy):
-    def compute():
+    def compute(self):
         base = super().compute()
-        lines = compute_lines(base)
-        res = remove_intersections(base, lines)
+        lines = self.compute_lines(base)
+        res = self.remove_intersections(base, lines)
 
-    def compute_lines(path: np.ndarray):
-        pass
-
-    def remove_intersections(path: np.ndarray, lines: np.ndarray):
-        pass
+    def compute_lines(self, path: np.ndarray):
+        res = []
+        for n in range(len(path)):
+            coords = (self.vertices[n],self.vertices[(n+1) % len(path)])
+            # a = (yf - yd) / (xf - xd)
+            a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0]) 
+            # b = yd - xda
+            b = coords[0][1] - coords[0][0] * a
+            res.append((a,b))
+        return res
+    
+    def remove_intersections(self, path: np.ndarray, lines: np.ndarray):
+        for line_couple in list(permutations(lines, 2)):
+            #résoudre ax1 + b1 = ax2 + b2 pour x
+            #(a1 - a2)x = b2 - b1
+            # x = (b2 - b1)/(a1 - a2)
+            pass
+        return res
