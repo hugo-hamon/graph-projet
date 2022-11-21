@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from itertools import product, permutations
+from itertools import product, permutations, combinations
 from typing import List
 import numpy as np
 
@@ -13,7 +13,7 @@ class Graph:
         else:
             self.n = vertices.shape[0]
             self.vertices = vertices
-        self.distances = np.zeros((n, n))
+        self.distances = np.zeros((self.n, self.n))
         self.__compute_distance()
 
     # REQUESTS   
@@ -37,7 +37,7 @@ class Graph:
         """Compute a list of distances from a list of paths"""
         return np.sum(self.distances[Ll[:,:-1], Ll[:,1:]], axis=1) + self.distances[Ll[:,0], Ll[:,-1]]
     
-    def compute():
+    def compute(self):
         """return the shortest path found using the class' algorithm"""
         return self.brute_force()
 
@@ -75,7 +75,12 @@ class Graph:
 
     def draw_path(self, path) -> None:
         """Plot the path"""
-        pass
+        for n in range(len(path)):
+           i, j = (self.vertices[n],self.vertices[(n+1) % len(path)])
+           plt.plot([i[0], j[0]], [i[1],j[1]],
+                    '-o', color='black', markersize=10, linewidth=1
+                )
+        plt.show()
 
 class Greedy(Graph):
     """Greedy algorithm"""
@@ -111,7 +116,7 @@ class Greedy_opti(Greedy):
     def compute(self):
         base = super().compute()
         lines = self.compute_lines(base)
-        res = self.remove_intersections(base, lines)
+        return self.remove_intersections(base, lines)
 
     def compute_lines(self, path: np.ndarray):
         res = []
@@ -125,9 +130,27 @@ class Greedy_opti(Greedy):
         return res
     
     def remove_intersections(self, path: np.ndarray, lines: np.ndarray):
-        for line_couple in list(permutations(lines, 2)):
-            #résoudre ax1 + b1 = ax2 + b2 pour x
-            #(a1 - a2)x = b2 - b1
-            # x = (b2 - b1)/(a1 - a2)
-            pass
-        return res
+        has_changed = True
+        while has_changed:
+            has_changed = False
+            for couple in list(combinations(range(len(path)), 2)):
+                line_couple = (lines[couple[0]], lines[couple[1]])
+                #résoudre ax1 + b1 = ax2 + b2 pour x
+                #(a1 - a2)x = b2 - b1
+                # x = (b2 - b1)/(a1 - a2)
+                x = (line_couple[1][1] - line_couple[0][1]) / (line_couple[0][0] - line_couple[1][0])
+                #fix if ou le swap
+                x_depart = self.vertices[path[couple[0]]][0]
+                x_arrive = self.vertices[path[(couple[0]+1)%len(path)]][0]
+                #si xdépart < x < xarrivé ou xdépart > x > xarrivé
+                print(x, x_depart, x_arrive, '\n',couple)
+                if ((x < x_depart and x > x_arrive) or 
+                    (x > x_arrive and x < x_depart)):
+                    has_changed = True
+                    # path = ... A B ... C D...
+                    # path deviens ... A C ... B D ...
+                    path[(couple[0]+1):couple[1]+1] = path[(couple[0]+1):couple[1]+1][::-1]
+                    print(self.draw_path(path))
+                    return None
+                    break
+        return path
