@@ -6,7 +6,8 @@ import numpy as np
 
 class Graph:
     """Base class for all algorithm, uses bruteforce"""
-    def __init__(self, n: int, vertices = None) -> None:
+
+    def __init__(self, n: int, vertices=None) -> None:
         if (vertices is None):
             self.n = n
             self.vertices = np.random.uniform(0, 1, (n, 2))
@@ -16,7 +17,7 @@ class Graph:
         self.distances = np.zeros((self.n, self.n))
         self.__compute_distance()
 
-    # REQUESTS   
+    # REQUESTS
     def euclidean_distance(self, v1: np.ndarray, v2: np.ndarray) -> float:
         """Return the euclidean distance between two vertices"""
         return np.sqrt((v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2)
@@ -32,14 +33,14 @@ class Graph:
     def compute_distance_by_path(self, L: np.ndarray) -> float:
         """Compute the distance of a path"""
         return sum(self.distances[L[:-1], L[1:]]) + self.distances[L[0], L[-1]]
-    
+
     def compute_list_distance_by_path(self, Ll: np.ndarray) -> np.ndarray:
         """Compute a list of distances from a list of paths"""
-        return np.sum(self.distances[Ll[:,:-1], Ll[:,1:]], axis=1) + self.distances[Ll[:,0], Ll[:,-1]]
-    
+        return np.sum(self.distances[Ll[:, :-1], Ll[:, 1:]], axis=1) + self.distances[Ll[:, 0], Ll[:, -1]]
+
     def compute(self):
         """return the shortest path found using the class' algorithm"""
-        return self.brute_force()
+        return self.__brute_force()
 
     # COMMANDS
 
@@ -76,14 +77,16 @@ class Graph:
     def draw_path(self, path) -> None:
         """Plot the path"""
         for n in range(len(path)):
-           i, j = (self.vertices[n],self.vertices[(n+1) % len(path)])
-           plt.plot([i[0], j[0]], [i[1],j[1]],
-                    '-o', color='black', markersize=10, linewidth=1
-                )
+            i, j = (self.vertices[n], self.vertices[(n+1) % len(path)])
+            plt.plot([i[0], j[0]], [i[1], j[1]],
+                     '-o', color='black', markersize=10, linewidth=1
+                     )
         plt.show()
+
 
 class Greedy(Graph):
     """Greedy algorithm"""
+
     def compute(self):
         return self.p_voisin(0)
 
@@ -112,45 +115,52 @@ class Greedy(Graph):
         self.distances[v1, L] = np.inf
         return int(np.argmin(self.distances[v1]))
 
+
 class Greedy_opti(Greedy):
     def compute(self):
         base = super().compute()
         lines = self.compute_lines(base)
         return self.remove_intersections(base, lines)
 
-    def compute_lines(self, path: np.ndarray):
+    def compute_lines(self, path: np.ndarray) -> np.ndarray:
         res = []
         for n in range(len(path)):
-            coords = (self.vertices[n],self.vertices[(n+1) % len(path)])
+            coords = (self.vertices[n], self.vertices[(n+1) % len(path)])
             # a = (yf - yd) / (xf - xd)
-            a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0]) 
+            a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0])
             # b = yd - xda
             b = coords[0][1] - coords[0][0] * a
-            res.append((a,b))
-        return res
-    
-    def remove_intersections(self, path: np.ndarray, lines: np.ndarray):
+            res.append((a, b))
+        return np.array(res)
+
+    def remove_intersections(self, path: np.ndarray, lines: np.ndarray) -> np.ndarray:
         has_changed = True
         while has_changed:
             has_changed = False
             for couple in list(combinations(range(len(path)), 2)):
                 line_couple = (lines[couple[0]], lines[couple[1]])
-                #résoudre ax1 + b1 = ax2 + b2 pour x
-                #(a1 - a2)x = b2 - b1
+                # résoudre ax1 + b1 = ax2 + b2 pour x
+                # (a1 - a2)x = b2 - b1
                 # x = (b2 - b1)/(a1 - a2)
-                x = (line_couple[1][1] - line_couple[0][1]) / (line_couple[0][0] - line_couple[1][0])
-                #fix if ou le swap
-                x_depart = self.vertices[path[couple[0]]][0]
-                x_arrive = self.vertices[path[(couple[0]+1)%len(path)]][0]
-                #si xdépart < x < xarrivé ou xdépart > x > xarrivé
-                print(x, x_depart, x_arrive, '\n',couple)
-                if ((x < x_depart and x > x_arrive) or 
-                    (x > x_arrive and x < x_depart)):
+                x = (line_couple[1][1] - line_couple[0][1]) / \
+                    (line_couple[0][0] - line_couple[1][0])
+                # fix if ou le swap
+                x_depart_1 = self.vertices[path[couple[0]]][0]
+                x_arrive_1 = self.vertices[path[(couple[0]+1) % len(path)]][0]
+                x_depart_2 = self.vertices[path[couple[1]]][0]
+                x_arrive_2 = self.vertices[path[(couple[1]+1) % len(path)]][0]
+                # si xdépart < x < xarrivé ou xdépart > x > xarrivé
+                # print(x, x_depart_1, x_arrive_1, '\n', couple)
+                if ((x < x_depart_1 and x > x_arrive_1) or (x < x_arrive_1 and x > x_depart_1)) and \
+                        ((x < x_depart_2 and x > x_arrive_2) or (x < x_arrive_2 and x > x_depart_2)):
                     has_changed = True
                     # path = ... A B ... C D...
                     # path deviens ... A C ... B D ...
-                    path[(couple[0]+1):couple[1]+1] = path[(couple[0]+1):couple[1]+1][::-1]
+                    print("Path before: ", path, "Couple: ", (couple[0]+1), couple[1] + 1)
+                    path[(couple[0]+1):couple[1] + 1] = path[(couple[0]+1):couple[1]+1][::-1]
+                    print("Path after: ", path)
                     print(self.draw_path(path))
-                    return None
                     break
         return path
+
+# BD
