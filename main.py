@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from config import Config
-from graph import Graph
+from graph import Graph, Greedy
 
 config_filepath = "config.json"
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     if config.brute_force:
         if config.show_info:
             print("Algorithme de brut force")
-        path = graph.brute_force()
+        path = graph.compute()
         dist = graph.compute_distance_by_path(path)
         if config.show_info:
             print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
@@ -29,8 +29,9 @@ if __name__ == '__main__':
     # --2.1 Algorithme du plus proche voisin--
     if config.show_info:
         print("Algorithme du plus proche voisin".center(50, "-"))
-    path = graph.p_voisin(0)
-    dist = graph.compute_distance_by_path(path)
+    greedy = Greedy(1, graph.get_vertices())
+    path = greedy.compute()
+    dist = greedy.compute_distance_by_path(path)
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
