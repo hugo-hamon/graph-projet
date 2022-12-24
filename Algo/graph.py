@@ -8,9 +8,12 @@ class Graph:
 
     def __init__(self, n: int, vertices=None) -> None:
         """Initialize the graph with n vertices. If vertices is None, generate random vertices"""
-        self.vertices = vertices if vertices is not None else \
-            np.random.uniform(0, 1, (n, 2))
-        self.n = n
+        if (vertices is None):
+            self.n = n
+            self.vertices = np.random.uniform(0, 1, (n, 2))
+        else:
+            self.n = vertices.shape[0]
+            self.vertices = vertices
         self.distances = np.zeros((self.n, self.n))
         self.__compute_distance()
 
@@ -81,8 +84,9 @@ class Graph:
     def draw_path(self, path) -> None:
         """Plot the path"""
         for n in range(len(path)):
-            i, j = (self.vertices[n], self.vertices[(n+1) % len(path)])
+            i, j = (self.vertices[path[n]], self.vertices[path[(n+1) % len(path)]])
             plt.plot([i[0], j[0]], [i[1], j[1]],
                      '-o', color='black', markersize=10, linewidth=1
                      )
+            plt.annotate(n, i, textcoords="offset points",xytext=(0,10), color="red")
         plt.show()
