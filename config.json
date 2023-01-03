@@ -1,7 +1,7 @@
 {
-    "city_numbers": 30,
+    "city_numbers": 10,
     "iterations_numbers": 100,
     "show_graph": false,
-    "show_info": true,
+    "show_info": false,
     "brute_force": false
 }

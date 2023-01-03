@@ -84,9 +84,11 @@ class Graph:
     def draw_path(self, path) -> None:
         """Plot the path"""
         for n in range(len(path)):
-            i, j = (self.vertices[path[n]], self.vertices[path[(n+1) % len(path)]])
+            i, j = (self.vertices[path[n]],
+                    self.vertices[path[(n+1) % len(path)]])
             plt.plot([i[0], j[0]], [i[1], j[1]],
                      '-o', color='black', markersize=10, linewidth=1
                      )
-            plt.annotate(n, i, textcoords="offset points",xytext=(0,10), color="red")
+            plt.annotate(str(n), i, textcoords="offset points",
+                         xytext=(0, 10), color="red")
         plt.show()

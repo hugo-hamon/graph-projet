@@ -1,4 +1,4 @@
-from Algo import Graph, BruteForce, Greedy, GreedyOpti, Prim
+from Algo import Graph, BruteForce, Greedy, GreedyOpti, Prim, MinimumWeightEdges
 import matplotlib.pyplot as plt
 from config import Config
 
@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
     # Create the graph
     graph = Graph(n=config.city_numbers, vertices=None)
+    graph.plot()
     if config.show_graph:
         print("Matrice des distances:")
         graph.print_distances()
@@ -43,6 +44,16 @@ if __name__ == '__main__':
 
     # --2.3 Algorithme arête de poids minimum--
 
+    if config.show_info:
+        print("Algorithme de poids minimum".center(50, "-"))
+    minimum_weight_edges = MinimumWeightEdges(config.city_numbers, graph.get_vertices())
+    path = minimum_weight_edges.compute()
+    dist = graph.compute_distance_by_path(path)
+    if config.show_info:
+        print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
+        print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+
+
     # --2.4 Algorithme arbre couvrant de poids minimum--
 
     if config.show_info:
@@ -55,3 +66,25 @@ if __name__ == '__main__':
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # --2.5 Algorithme heuristique de la demi-somme--
+
+    # Test matplotlib
+    """
+    path_brute_force = []
+    path_weight = []
+    path_greedy = []
+    for _ in range(1000000):
+        graph = Graph(n=config.city_numbers, vertices=None)
+        brute_force = BruteForce(n=config.city_numbers, vertices=graph.get_vertices())
+        greedy = Greedy(config.city_numbers, graph.get_vertices())
+        minimum_weight_edges = MinimumWeightEdges(config.city_numbers, graph.get_vertices())
+
+        path_greedy.append(graph.compute_distance_by_path(greedy.compute()))
+        path_brute_force.append(graph.compute_distance_by_path(brute_force.compute()))
+        path_weight.append(graph.compute_distance_by_path(minimum_weight_edges.compute()))
+
+    print(sum(path_greedy) / len(path_greedy))
+    print(sum(path_brute_force) / len(path_brute_force))
+    print(sum(path_weight) / len(path_weight))
+    """
+
+
