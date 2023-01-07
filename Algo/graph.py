@@ -89,6 +89,6 @@ class Graph:
             plt.plot([i[0], j[0]], [i[1], j[1]],
                      '-o', color='black', markersize=10, linewidth=1
                      )
-            plt.annotate(str(n), i, textcoords="offset points",
+            plt.annotate(str(path[n]), i, textcoords="offset points",
                          xytext=(0, 10), color="red")
         plt.show()

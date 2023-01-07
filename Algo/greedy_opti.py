@@ -1,12 +1,10 @@
-from itertools import combinations
 from .greedy import Greedy
 from typing import Tuple
 import numpy as np
 
-
+#TODO Regler le probleme de boucle infini
 class GreedyOpti(Greedy):
     def compute(self):
-        i = True
         base = super().compute()
         return self.remove_intersections(base)
 
@@ -17,7 +15,7 @@ class GreedyOpti(Greedy):
             # a = (yf - yd) / (xf - xd)
             a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0])
             # b = yd - xda
-            b = (coords[0][1] - coords[0][0]) * a
+            b = coords[0][1] - coords[0][0] * a
             res.append((a, b))
         return np.array(res)
 
@@ -28,7 +26,7 @@ class GreedyOpti(Greedy):
         # a = (yf - yd) / (xf - xd)
         a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0])
         # b = yd - xda
-        b = (coords[0][1] - coords[0][0]) * a
+        b = coords[0][1] - coords[0][0] * a
         return a, b
     """ 
     def remove_intersections(self, path: np.ndarray, lines: np.ndarray) -> np.ndarray:
@@ -60,11 +58,14 @@ class GreedyOpti(Greedy):
             currentPoint = pointsToCheck[0]
             hasCol = False
             for n in range(len(path)):
-                if currentPoint == n:
-                    pass
                 currentPointIndex = np.flatnonzero(path == currentPoint)[0]
                 otherPointIndex = np.flatnonzero(path == n)[0]
-                
+                print("Index : ", currentPointIndex, otherPointIndex)
+                if currentPointIndex == otherPointIndex or \
+                    (currentPointIndex + 1) % len(path) == otherPointIndex or \
+                    (currentPointIndex - 1) % len(path) == otherPointIndex:
+                    continue
+                # Si les points sont directements connectés (adjacent ou égaux)
                 xD1 = self.vertices[currentPoint][0]
                 xA1 = self.vertices[path[(currentPointIndex + 1) % len(path)]][0]
                 line1 = lines[currentPointIndex]
@@ -74,9 +75,13 @@ class GreedyOpti(Greedy):
                 # résoudre ax1 + b1 = ax2 + b2 pour x
                 # (a1 - a2)x = b2 - b1
                 # x = (b2 - b1)/(a1 - a2)
+                #print("b", line2[1], line1[1],"a", line1[0], line2[0])
                 x = (line2[1] - line1[1]) / (line1[0] - line2[0])
+                print("Points: ", currentPoint, n)
+                #print(xD1, xD2, '\n', xA1, xA2, x)
                 if ((x < max(xD1, xA1) + 0.001 and x > min(xD1, xA1) - 0.001) and
                      (x < max(xD2, xA2) + 0.001 and x > min(xD2, xA2) - 0.001)):
+                    print("CROISEMENT")
                     hasCol = True
                     # Arriver ici signifie que la ligne partante de currentPoint vers B
                     #   intersecte avec la ligne partante de n vers D
@@ -94,6 +99,7 @@ class GreedyOpti(Greedy):
                     if len(np.flatnonzero(np.array(pointsToCheck) == n)) != 0:
                         pointsToCheck.append(n)
                     break
+                print("")
             if not hasCol:
                 pointsToCheck.remove(currentPoint)
         return path

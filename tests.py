@@ -1,5 +1,5 @@
 from Algo import Greedy, GreedyOpti
-temoin = Greedy(12)
+temoin = Greedy(20)
 graph = GreedyOpti(8, temoin.get_vertices())
 path = (temoin.compute())
 path2 = (graph.compute())
