@@ -2,17 +2,22 @@ from .greedy import Greedy
 from typing import Tuple
 import numpy as np
 
-#TODO Regler le probleme de boucle infini
+# TODO Regler le probleme de boucle infini
+
+
 class GreedyOpti(Greedy):
     def compute(self):
+        """Compute the path"""
         self.hessMeter = 0
         base = super().compute()
         return self.remove_intersections(base)
 
     def compute_lines(self, path: np.ndarray) -> np.ndarray:
+        """Compute the lines"""
         res = []
         for n in range(len(path)):
-            coords = (self.vertices[path[n]], self.vertices[path[(n+1) % len(path)]])
+            coords = (self.vertices[path[n]],
+                      self.vertices[path[(n+1) % len(path)]])
             # a = (yf - yd) / (xf - xd)
             a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0])
             # b = yd - xda
@@ -20,20 +25,21 @@ class GreedyOpti(Greedy):
             res.append((a, b))
         return np.array(res)
 
-    def compute_line(self, path, point) -> Tuple[float, float]:
+    def compute_line(self, path: np.ndarray, index_point: int) -> Tuple[float, float]:
         """Compute the lines going from the point"""
-        n = point
-        coords = (self.vertices[path[n]], self.vertices[path[(n+1) % len(path)]])
+        n = index_point
+        coords = (self.vertices[path[n]],
+                  self.vertices[path[(n+1) % len(path)]])
         # a = (yf - yd) / (xf - xd)
         a = (coords[1][1] - coords[0][1]) / (coords[1][0] - coords[0][0])
-        # b = yd - xda
+        # b = yd - xd * a
         b = coords[0][1] - coords[0][0] * a
         return a, b
 
     def remove_intersections(self, path: np.ndarray) -> np.ndarray:
-        lines = self.compute_lines(path) 
+        lines = self.compute_lines(path)
         pointsToCheck = list(path.copy())
-        while pointsToCheck != []:
+        while pointsToCheck:
             currentPoint = pointsToCheck[0]
             hasCol = False
             for n in range(len(path)):
@@ -42,10 +48,11 @@ class GreedyOpti(Greedy):
                 # Si les points sont directements connectés (adjacent ou égaux)
                 if currentPointIndex == otherPointIndex or \
                     (currentPointIndex + 1) % len(path) == otherPointIndex or \
-                    (currentPointIndex - 1) % len(path) == otherPointIndex:
+                        (currentPointIndex - 1) % len(path) == otherPointIndex:
                     continue
                 xD1 = self.vertices[currentPoint][0]
-                xA1 = self.vertices[path[(currentPointIndex + 1) % len(path)]][0]
+                xA1 = self.vertices[path[(
+                    currentPointIndex + 1) % len(path)]][0]
                 line1 = lines[currentPointIndex]
                 xD2 = self.vertices[n][0]
                 xA2 = self.vertices[path[(otherPointIndex + 1) % len(path)]][0]
@@ -55,7 +62,11 @@ class GreedyOpti(Greedy):
                 # x = (b2 - b1)/(a1 - a2)
                 x = (line2[1] - line1[1]) / (line1[0] - line2[0])
                 if ((x < max(xD1, xA1) + 0.001 and x > min(xD1, xA1) - 0.001) and
-                     (x < max(xD2, xA2) + 0.001 and x > min(xD2, xA2) - 0.001)):
+                        (x < max(xD2, xA2) + 0.001 and x > min(xD2, xA2) - 0.001)):
+                    # Arriver ici signifie que la ligne partante de currentPoint vers B
+                    #   intersecte avec la ligne partante de n vers D
+                    # path : ... currentPoint - B ... n - D...
+                    #   deviens ... currentPoint - n ... B - D ...
                     hasCol = True
                     self.hessMeter += 1
                     if self.hessMeter >= 20:
@@ -65,10 +76,6 @@ class GreedyOpti(Greedy):
                         if self.hessMeter >= 25:
                             print("Boucle?")
                             return path
-                    # Arriver ici signifie que la ligne partante de currentPoint vers B
-                    #   intersecte avec la ligne partante de n vers D
-                    # path : ... currentPoint - B ... n - D...
-                    #   deviens ... currentPoint - n ... B - D ...
                     path[currentPointIndex + 1:otherPointIndex + 1] = \
                         path[otherPointIndex:currentPointIndex:-1]
                     lines[currentPointIndex + 1:otherPointIndex + 1] = \

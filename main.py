@@ -1,4 +1,4 @@
-from Algo import Graph, BruteForce, Greedy, GreedyOpti, Prim, MinimumWeightEdges
+from Algo import Graph, BruteForce, Greedy, GreedyOpti, Prim, MinimumWeightEdges, BranchAndBound
 import matplotlib.pyplot as plt
 from config import Config
 
@@ -13,7 +13,6 @@ if __name__ == '__main__':
 
     # Create the graph
     graph = Graph(n=config.city_numbers, vertices=None)
-    graph.plot()
     if config.show_graph:
         print("Matrice des distances:")
         graph.print_distances()
@@ -31,6 +30,7 @@ if __name__ == '__main__':
             print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # --2.1 Algorithme du plus proche voisin--
+
     if config.show_info:
         print("Algorithme du plus proche voisin".center(50, "-"))
     greedy = Greedy(config.city_numbers, graph.get_vertices())
@@ -46,13 +46,13 @@ if __name__ == '__main__':
 
     if config.show_info:
         print("Algorithme de poids minimum".center(50, "-"))
-    minimum_weight_edges = MinimumWeightEdges(config.city_numbers, graph.get_vertices())
+    minimum_weight_edges = MinimumWeightEdges(
+        config.city_numbers, graph.get_vertices())
     path = minimum_weight_edges.compute()
     dist = graph.compute_distance_by_path(path)
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
-
 
     # --2.4 Algorithme arbre couvrant de poids minimum--
 
@@ -66,6 +66,16 @@ if __name__ == '__main__':
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # --2.5 Algorithme heuristique de la demi-somme--
+    if config.show_info:
+        print("Algorithme de la demi-somme".center(50, "-"))
+    branch_and_bound = BranchAndBound(
+        config.city_numbers, graph.get_vertices()
+    )
+    path = branch_and_bound.compute()
+    dist = graph.compute_distance_by_path(path)
+    if config.show_info:
+        print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
+        print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
 
     # Test matplotlib
     """
@@ -86,5 +96,3 @@ if __name__ == '__main__':
     print(sum(path_brute_force) / len(path_brute_force))
     print(sum(path_weight) / len(path_weight))
     """
-
-
