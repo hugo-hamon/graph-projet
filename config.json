@@ -1,7 +1,8 @@
 {
-    "city_numbers": 10,
+    "city_numbers": 50,
     "iterations_numbers": 100,
     "show_graph": false,
     "show_info": true,
-    "brute_force": true
+    "brute_force": false,
+    "execution_time": true
 }

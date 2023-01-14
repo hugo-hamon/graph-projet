@@ -28,7 +28,7 @@ class MinimumWeightEdges(Graph):
         return np.array(path)
 
     def __is_close_graph(self, points: List[int], path: List[int]) -> bool:
-        """Return True if the graph is close"""
+        """Return True if the graph is closed"""
         if len(points) != 2:
             raise ValueError("The points must be of length 2")
         return points[1] in path and points[0] in path
