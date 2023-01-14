@@ -81,7 +81,7 @@ class Graph:
         """Print the distances matrix"""
         print(np.array2string(self.distances, precision=2, floatmode='fixed'))
 
-    def draw_path(self, path) -> None:
+    def draw_path(self, path, name) -> None:
         """Plot the path"""
         for n in range(len(path)):
             i, j = (self.vertices[path[n]],
@@ -91,4 +91,5 @@ class Graph:
                      )
             plt.annotate(str(path[n]), i, textcoords="offset points",
                          xytext=(0, 10), color="red")
+        plt.title(name)
         plt.show()

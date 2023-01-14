@@ -19,7 +19,7 @@ if __name__ == '__main__':
         print("Matrice des distances:")
         graph.print_distances()
 
-    # --2.0 Algorithme de brut froce--
+    # --2.0 Algorithme de brut force--
     if config.brute_force and config.city_numbers <= 10:
         paths["brute_force"] = []
         brute_force = BruteForce(
@@ -31,6 +31,7 @@ if __name__ == '__main__':
         if config.show_info:
             print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
             print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+        graph.draw_path(path, "Brute force")
 
     # --2.1 Algorithme du plus proche voisin--
 
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+    graph.draw_path(path, "Algorithme du plus proche voisin")
 
     # --2.2 Algorithme du plus proche voisin amélioré--
     if config.show_info:
@@ -60,6 +62,7 @@ if __name__ == '__main__':
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+    graph.draw_path(path, "Algorithme du plus proche voisin amélioré")
 
     # --2.3 Algorithme arête de poids minimum--
 
@@ -76,6 +79,7 @@ if __name__ == '__main__':
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+    graph.draw_path(path, "Algorithme de poids minimum")
 
     # --2.4 Algorithme arbre couvrant de poids minimum--
 
@@ -91,6 +95,7 @@ if __name__ == '__main__':
     if config.show_info:
         print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
         print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+    graph.draw_path(path, "Algorithme de prim")
 
     # --2.5 Algorithme heuristique de la demi-somme--
     if config.show_info:
@@ -105,6 +110,7 @@ if __name__ == '__main__':
         if config.show_info:
             print("Distance parcourue:\033[92m", round(dist, 2), "\033[0m")
             print("Chemin parcouru:\033[92m", [s + 1 for s in path], "\033[0m")
+        graph.draw_path(path, "Algorithme de la demi-somme")
 
     # Test matplotlib
     for _ in range(config.iterations_numbers):
